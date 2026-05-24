@@ -11,14 +11,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Nomor HP dan password wajib diisi' }, { status: 400 })
     }
 
+    // Normalisasi: hapus spasi & tanda hubung, ganti +62 → 0
+    const normalizedMobile = mobile
+      .trim()
+      .replace(/[\s\-]/g, '')
+      .replace(/^\+62/, '0')
+
     const supabase = createServerClient()
-    const { data: resident, error } = await supabase
+
+    // Cari dengan nomor yang sudah tersimpan di DB (bisa format apapun)
+    // Strategi: load semua resident lalu bandingkan setelah normalisasi
+    const { data: residents } = await supabase
       .from('residents')
       .select('id, name, blok, mobile, pw_hash, role, is_active')
-      .eq('mobile', mobile.trim())
-      .single()
 
-    if (error || !resident) {
+    const resident = (residents ?? []).find(r => {
+      const stored = r.mobile?.trim().replace(/[\s\-]/g, '').replace(/^\+62/, '0') ?? ''
+      return stored === normalizedMobile
+    })
+
+    if (!resident) {
       return NextResponse.json({ error: 'Nomor HP atau password salah' }, { status: 401 })
     }
 

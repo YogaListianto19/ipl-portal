@@ -30,7 +30,10 @@ export async function POST(req: NextRequest) {
   if (!valid) return NextResponse.json({ error: 'Password lama tidak sesuai' }, { status: 400 })
 
   const newHash = await bcrypt.hash(newPassword, 12)
-  await supabase.from('residents').update({ pw_hash: newHash }).eq('id', payload.sub)
+  await supabase
+    .from('residents')
+    .update({ pw_hash: newHash, pw_locked: true })
+    .eq('id', payload.sub)
 
   return NextResponse.json({ success: true })
 }

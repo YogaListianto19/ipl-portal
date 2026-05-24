@@ -91,30 +91,38 @@ export async function PUT(req: NextRequest) {
     if (residents?.length > 0) {
       const { data: existing } = await supabase
         .from('residents')
-        .select('blok, pw_hash')
+        .select('blok, pw_hash, pw_locked')
 
-      const existingMap = new Map((existing ?? []).map(r => [r.blok, r.pw_hash]))
+      const existingMap = new Map(
+        (existing ?? []).map(r => [r.blok, { pw_hash: r.pw_hash, pw_locked: r.pw_locked ?? false }])
+      )
 
       const toUpsert = await Promise.all(
         residents.map(async (r: { name: string; mobile: string; blok: string; web_password: string; web_active: boolean; web_role: string }) => {
           let pw_hash: string
           if (existingMap.has(r.blok)) {
-            // Resident sudah ada: SELALU pertahankan hash yang tersimpan.
-            // Mencegah password yg sudah diubah user lewat portal tertimpa ulang.
-            // Reset password hanya bisa via fitur admin, bukan lewat sync Excel.
-            pw_hash = existingMap.get(r.blok)!
+            const stored = existingMap.get(r.blok)!
+            if (stored.pw_locked) {
+              // User pernah ganti password sendiri lewat portal → jangan overwrite
+              pw_hash = stored.pw_hash
+            } else {
+              // Password belum pernah diubah manual → sync bebas update dari Odoo/Excel
+              pw_hash = await bcrypt.hash(r.web_password || 'rossela2026', 12)
+            }
             residentsUpdated++
           } else {
-            // Resident baru: gunakan password dari Odoo
+            // Resident baru → gunakan password dari Odoo/Excel
             pw_hash = await bcrypt.hash(r.web_password || 'rossela2026', 12)
             residentsNew++
           }
 
+          const stored = existingMap.get(r.blok)
           return {
             name: r.name,
             mobile: r.mobile,
             blok: r.blok,
             pw_hash,
+            pw_locked: stored?.pw_locked ?? false,
             role: r.web_role || 'resident',
             is_active: r.web_active !== false,
           }

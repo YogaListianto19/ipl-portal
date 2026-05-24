@@ -83,7 +83,11 @@ export function LoginForm() {
                   inputMode="numeric"
                   placeholder="08xxxxxxxxxx"
                   value={mobile}
-                  onChange={e => setMobile(e.target.value)}
+                  onChange={e => {
+                    // Strip spasi & tanda hubung langsung saat ketik
+                    const val = e.target.value.replace(/[\s\-]/g, '')
+                    setMobile(val)
+                  }}
                   required
                   autoComplete="tel"
                   disabled={isPending}
