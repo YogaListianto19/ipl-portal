@@ -98,16 +98,17 @@ export async function PUT(req: NextRequest) {
       const toUpsert = await Promise.all(
         residents.map(async (r: { name: string; mobile: string; blok: string; web_password: string; web_active: boolean; web_role: string }) => {
           let pw_hash: string
-          if (existingMap.has(r.blok) && !r.web_password) {
-            // Pertahankan hash lama jika password tidak berubah
+          if (existingMap.has(r.blok)) {
+            // Resident sudah ada: SELALU pertahankan hash yang tersimpan.
+            // Mencegah password yg sudah diubah user lewat portal tertimpa ulang.
+            // Reset password hanya bisa via fitur admin, bukan lewat sync Excel.
             pw_hash = existingMap.get(r.blok)!
+            residentsUpdated++
           } else {
+            // Resident baru: gunakan password dari Odoo
             pw_hash = await bcrypt.hash(r.web_password || 'rossela2026', 12)
+            residentsNew++
           }
-
-          const isNew = !existingMap.has(r.blok)
-          if (isNew) residentsNew++
-          else residentsUpdated++
 
           return {
             name: r.name,
