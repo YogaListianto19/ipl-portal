@@ -6,10 +6,10 @@ import { Navbar } from '@/components/Navbar'
 import { Sidebar } from '@/components/Sidebar'
 import { BottomNav } from '@/components/BottomNav'
 import { Footer } from '@/components/Footer'
-import { DashboardClient } from './DashboardClient'
-import type { Invoice, KasInvoice } from '@/lib/types'
+import { PengeluaranKasClient } from './PengeluaranKasClient'
+import type { KasExpense } from '@/lib/types'
 
-export default async function DashboardPage() {
+export default async function PengeluaranKasPage() {
   const cookieStore = await cookies()
   const token = cookieStore.get('ipl_token')?.value
   const payload = token ? verifyToken(token) : null
@@ -17,30 +17,17 @@ export default async function DashboardPage() {
 
   const supabase = createServerClient()
 
-  const [{ data: invoices }, { data: kasInvoices }] = await Promise.all([
-    supabase
-      .from('invoices')
-      .select('*')
-      .eq('blok', payload.blok)
-      .order('year_period', { ascending: false }),
-    supabase
-      .from('kas_invoices')
-      .select('*')
-      .eq('blok', payload.blok)
-      .order('year_period', { ascending: false }),
-  ])
+  const { data: kasExpenses } = await supabase
+    .from('kas_expenses')
+    .select('*')
+    .order('bill_date', { ascending: false })
 
   return (
     <div className="min-h-dvh bg-background flex">
       <Sidebar name={payload.name} blok={payload.blok} role={payload.role} />
       <div className="flex-1 flex flex-col lg:ml-64">
         <Navbar name={payload.name} blok={payload.blok} role={payload.role} />
-        <DashboardClient
-          name={payload.name}
-          blok={payload.blok}
-          invoices={(invoices ?? []) as Invoice[]}
-          kasInvoices={(kasInvoices ?? []) as KasInvoice[]}
-        />
+        <PengeluaranKasClient kasExpenses={(kasExpenses ?? []) as KasExpense[]} />
         <Footer />
         <BottomNav role={payload.role} />
       </div>

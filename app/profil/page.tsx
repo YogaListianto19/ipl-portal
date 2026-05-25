@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { verifyToken } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
+import { Sidebar } from '@/components/Sidebar'
 import { BottomNav } from '@/components/BottomNav'
 import { Footer } from '@/components/Footer'
 import { ProfilClient } from './ProfilClient'
@@ -21,19 +22,21 @@ export default async function ProfilPage() {
     supabase
       .from('invoices')
       .select('*')
-      .eq('resident_id', payload.sub)
-      .order('year_period', { ascending: false })
-      .order('month_period', { ascending: false }),
+      .eq('blok', payload.blok)
+      .order('year_period', { ascending: false }),
   ])
 
   if (!resident) redirect('/login')
 
   return (
-    <div className="min-h-dvh bg-background flex flex-col">
-      <Navbar name={payload.name} blok={payload.blok} role={payload.role} />
-      <ProfilClient resident={resident as Resident} invoices={(invoices ?? []) as Invoice[]} />
-      <Footer />
-      <BottomNav role={payload.role} />
+    <div className="min-h-dvh bg-background flex">
+      <Sidebar name={payload.name} blok={payload.blok} role={payload.role} />
+      <div className="flex-1 flex flex-col lg:ml-64">
+        <Navbar name={payload.name} blok={payload.blok} role={payload.role} />
+        <ProfilClient resident={resident as Resident} invoices={(invoices ?? []) as Invoice[]} />
+        <Footer />
+        <BottomNav role={payload.role} />
+      </div>
     </div>
   )
 }

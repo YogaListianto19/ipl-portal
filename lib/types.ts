@@ -72,3 +72,30 @@ export interface ResidentSummary {
   unpaidCount: number
   totalDue: number
 }
+
+export interface KasInvoice {
+  id: string
+  invoice_number: string
+  invoice_date: string | null
+  month_period: string
+  year_period: string
+  resident_name: string | null
+  blok: string | null
+  amount_total: number
+  amount_due: number
+  status: 'Paid' | 'Not Paid'
+  created_at: string
+}
+
+export interface KasExpense {
+  id: string
+  bill_number: string
+  bill_date: string | null
+  due_date: string | null
+  vendor_name: string | null
+  description: string | null
+  amount_total: number
+  amount_due: number
+  payment_status: 'paid' | 'not_paid' | 'partial' | 'in_payment'
+  created_at: string
+}
