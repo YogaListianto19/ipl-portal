@@ -47,7 +47,7 @@ export function DashboardClient({ name, blok, invoices, kasInvoices }: Props) {
   const allOk = iplOk && kasOk
 
   return (
-    <main className="max-w-xl mx-auto px-4 py-5 pb-24 lg:pb-8 space-y-5">
+    <main className="max-w-xl mx-auto lg:max-w-3xl px-4 py-5 pb-24 lg:pb-8 space-y-5">
       {/* Hero greeting */}
       <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-rose-900 via-rose-700 to-pink-600 p-5 shadow-md shadow-primary/20">
         <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
@@ -85,141 +85,141 @@ export function DashboardClient({ name, blok, invoices, kasInvoices }: Props) {
         </div>
       )}
 
-      {/* IPL Section */}
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-foreground">Tagihan IPL</h2>
-          <Link href="/tagihan-ipl" className="flex items-center gap-1 text-xs text-primary font-medium hover:underline cursor-pointer">
-            Lihat semua <ChevronRight className="w-3 h-3" />
-          </Link>
-        </div>
+      {/* Desktop: 2 kolom; Mobile: stack */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        <div className="grid grid-cols-3 gap-2 mb-2">
-          <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-slate-700 to-slate-500 p-3 shadow-sm shadow-slate-300/30">
-            <p className="text-2xl font-bold text-white tabular-nums">{ipl.total}</p>
-            <p className="text-[10px] text-white/60 font-medium mt-0.5">Total</p>
+        {/* IPL Section */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-foreground">Tagihan IPL</h2>
+            <Link href="/tagihan-ipl" className="flex items-center gap-1 text-xs text-primary font-medium hover:underline cursor-pointer">
+              Lihat semua <ChevronRight className="w-3 h-3" />
+            </Link>
           </div>
-          <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-emerald-600 to-teal-500 p-3 shadow-sm shadow-emerald-300/30">
-            <p className="text-2xl font-bold text-white tabular-nums">{ipl.paid}</p>
-            <p className="text-[10px] text-white/60 font-medium mt-0.5">Lunas</p>
-          </div>
-          <div className={cn(
-            'relative overflow-hidden rounded-xl p-3 shadow-sm',
-            ipl.unpaid > 0 ? 'bg-linear-to-br from-rose-600 to-pink-500 shadow-rose-300/30' : 'bg-linear-to-br from-slate-200 to-slate-100'
-          )}>
-            <p className={cn('text-2xl font-bold tabular-nums', ipl.unpaid > 0 ? 'text-white' : 'text-slate-500')}>{ipl.unpaid}</p>
-            <p className={cn('text-[10px] font-medium mt-0.5', ipl.unpaid > 0 ? 'text-white/60' : 'text-slate-400')}>Belum</p>
-          </div>
-        </div>
 
-        {ipl.totalDue > 0 ? (
-          <div className="flex items-center gap-2 p-3 bg-red-50 rounded-xl border border-red-100">
-            <XCircle className="w-4 h-4 text-red-500 shrink-0" />
-            <p className="text-xs text-red-700">Tunggakan IPL: <span className="font-bold">{formatRupiah(ipl.totalDue)}</span></p>
-          </div>
-        ) : ipl.total > 0 ? (
-          <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <p className="text-xs text-emerald-700 font-medium">IPL lunas semua · dibayar {formatRupiah(ipl.totalPaid)}</p>
-          </div>
-        ) : null}
-
-        {/* Quick links IPL */}
-        <div className="grid grid-cols-2 gap-2 mt-2">
-          <Link href="/tagihan-ipl" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-primary/30 hover:bg-rose-50/50 transition-colors cursor-pointer group">
-            <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
-              <FileText className="w-4 h-4 text-rose-600" />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-slate-700 to-slate-500 p-3 shadow-sm shadow-slate-300/30">
+              <p className="text-2xl font-bold text-white tabular-nums">{ipl.total}</p>
+              <p className="text-[10px] text-white/60 font-medium mt-0.5">Total</p>
             </div>
-            <div>
-              <p className="text-xs font-semibold text-foreground">Tagihan IPL</p>
-              <p className="text-[10px] text-muted-foreground">Riwayat lengkap</p>
+            <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-emerald-600 to-teal-500 p-3 shadow-sm shadow-emerald-300/30">
+              <p className="text-2xl font-bold text-white tabular-nums">{ipl.paid}</p>
+              <p className="text-[10px] text-white/60 font-medium mt-0.5">Lunas</p>
             </div>
-          </Link>
-          <Link href="/pengeluaran-ipl" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-primary/30 hover:bg-rose-50/50 transition-colors cursor-pointer group">
-            <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
-              <TrendingDown className="w-4 h-4 text-rose-600" />
+            <div className={cn(
+              'relative overflow-hidden rounded-xl p-3 shadow-sm',
+              ipl.unpaid > 0 ? 'bg-linear-to-br from-rose-600 to-pink-500 shadow-rose-300/30' : 'bg-linear-to-br from-slate-200 to-slate-100'
+            )}>
+              <p className={cn('text-2xl font-bold tabular-nums', ipl.unpaid > 0 ? 'text-white' : 'text-slate-500')}>{ipl.unpaid}</p>
+              <p className={cn('text-[10px] font-medium mt-0.5', ipl.unpaid > 0 ? 'text-white/60' : 'text-slate-400')}>Belum</p>
             </div>
-            <div>
-              <p className="text-xs font-semibold text-foreground">Pengeluaran IPL</p>
-              <p className="text-[10px] text-muted-foreground">Biaya operasional</p>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="border-t border-border/40" />
-
-      {/* Kas Section */}
-      <section>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-foreground">Uang Kas</h2>
-          <Link href="/tagihan-kas" className="flex items-center gap-1 text-xs text-violet-600 font-medium hover:underline cursor-pointer">
-            Lihat semua <ChevronRight className="w-3 h-3" />
-          </Link>
-        </div>
-
-        {kas.total === 0 ? (
-          <div className="text-center py-6 text-muted-foreground bg-card rounded-2xl border border-border/40">
-            <Wallet className="w-8 h-8 mx-auto mb-2 opacity-30" />
-            <p className="text-xs">Belum ada data tagihan kas</p>
           </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-3 gap-2 mb-2">
-              <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-violet-700 to-purple-500 p-3 shadow-sm shadow-violet-300/30">
-                <p className="text-2xl font-bold text-white tabular-nums">{kas.total}</p>
-                <p className="text-[10px] text-white/60 font-medium mt-0.5">Total</p>
+
+          {ipl.totalDue > 0 ? (
+            <div className="flex items-center gap-2 p-3 bg-red-50 rounded-xl border border-red-100">
+              <XCircle className="w-4 h-4 text-red-500 shrink-0" />
+              <p className="text-xs text-red-700">Tunggakan: <span className="font-bold">{formatRupiah(ipl.totalDue)}</span></p>
+            </div>
+          ) : ipl.total > 0 ? (
+            <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <p className="text-xs text-emerald-700 font-medium">Lunas semua · {formatRupiah(ipl.totalPaid)}</p>
+            </div>
+          ) : null}
+
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/tagihan-ipl" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-primary/30 hover:bg-rose-50/50 transition-colors cursor-pointer group">
+              <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
+                <FileText className="w-4 h-4 text-rose-600" />
               </div>
-              <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-emerald-600 to-teal-500 p-3 shadow-sm shadow-emerald-300/30">
-                <p className="text-2xl font-bold text-white tabular-nums">{kas.paid}</p>
-                <p className="text-[10px] text-white/60 font-medium mt-0.5">Lunas</p>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Tagihan IPL</p>
+                <p className="text-[10px] text-muted-foreground">Riwayat lengkap</p>
               </div>
-              <div className={cn(
-                'relative overflow-hidden rounded-xl p-3 shadow-sm',
-                kas.unpaid > 0 ? 'bg-linear-to-br from-amber-500 to-orange-400 shadow-amber-300/30' : 'bg-linear-to-br from-slate-200 to-slate-100'
-              )}>
-                <p className={cn('text-2xl font-bold tabular-nums', kas.unpaid > 0 ? 'text-white' : 'text-slate-500')}>{kas.unpaid}</p>
-                <p className={cn('text-[10px] font-medium mt-0.5', kas.unpaid > 0 ? 'text-white/60' : 'text-slate-400')}>Belum</p>
+            </Link>
+            <Link href="/pengeluaran-ipl" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-primary/30 hover:bg-rose-50/50 transition-colors cursor-pointer group">
+              <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
+                <TrendingDown className="w-4 h-4 text-rose-600" />
               </div>
-            </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Pengeluaran IPL</p>
+                <p className="text-[10px] text-muted-foreground">Biaya operasional</p>
+              </div>
+            </Link>
+          </div>
+        </section>
 
-            {kas.totalDue > 0 ? (
-              <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
-                <XCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                <p className="text-xs text-amber-700">Tunggakan Kas: <span className="font-bold">{formatRupiah(kas.totalDue)}</span></p>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <p className="text-xs text-emerald-700 font-medium">Kas lunas semua</p>
-              </div>
-            )}
-          </>
-        )}
+        {/* Kas Section */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-foreground">Uang Kas</h2>
+            <Link href="/tagihan-kas" className="flex items-center gap-1 text-xs text-violet-600 font-medium hover:underline cursor-pointer">
+              Lihat semua <ChevronRight className="w-3 h-3" />
+            </Link>
+          </div>
 
-        {/* Quick links Kas */}
-        <div className="grid grid-cols-2 gap-2 mt-2">
-          <Link href="/tagihan-kas" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-violet-300 hover:bg-violet-50/50 transition-colors cursor-pointer group">
-            <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-200 transition-colors">
-              <Wallet className="w-4 h-4 text-violet-600" />
+          {kas.total === 0 ? (
+            <div className="text-center py-6 text-muted-foreground bg-card rounded-2xl border border-border/40">
+              <Wallet className="w-8 h-8 mx-auto mb-2 opacity-30" />
+              <p className="text-xs">Belum ada data tagihan kas</p>
             </div>
-            <div>
-              <p className="text-xs font-semibold text-foreground">Tagihan Kas</p>
-              <p className="text-[10px] text-muted-foreground">Iuran kas warga</p>
-            </div>
-          </Link>
-          <Link href="/pengeluaran-kas" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-violet-300 hover:bg-violet-50/50 transition-colors cursor-pointer group">
-            <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-200 transition-colors">
-              <Receipt className="w-4 h-4 text-violet-600" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-foreground">Pengeluaran Kas</p>
-              <p className="text-[10px] text-muted-foreground">Laporan belanja</p>
-            </div>
-          </Link>
-        </div>
-      </section>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-violet-700 to-purple-500 p-3 shadow-sm shadow-violet-300/30">
+                  <p className="text-2xl font-bold text-white tabular-nums">{kas.total}</p>
+                  <p className="text-[10px] text-white/60 font-medium mt-0.5">Total</p>
+                </div>
+                <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-emerald-600 to-teal-500 p-3 shadow-sm shadow-emerald-300/30">
+                  <p className="text-2xl font-bold text-white tabular-nums">{kas.paid}</p>
+                  <p className="text-[10px] text-white/60 font-medium mt-0.5">Lunas</p>
+                </div>
+                <div className={cn(
+                  'relative overflow-hidden rounded-xl p-3 shadow-sm',
+                  kas.unpaid > 0 ? 'bg-linear-to-br from-amber-500 to-orange-400 shadow-amber-300/30' : 'bg-linear-to-br from-slate-200 to-slate-100'
+                )}>
+                  <p className={cn('text-2xl font-bold tabular-nums', kas.unpaid > 0 ? 'text-white' : 'text-slate-500')}>{kas.unpaid}</p>
+                  <p className={cn('text-[10px] font-medium mt-0.5', kas.unpaid > 0 ? 'text-white/60' : 'text-slate-400')}>Belum</p>
+                </div>
+              </div>
+
+              {kas.totalDue > 0 ? (
+                <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                  <XCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <p className="text-xs text-amber-700">Tunggakan: <span className="font-bold">{formatRupiah(kas.totalDue)}</span></p>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <p className="text-xs text-emerald-700 font-medium">Kas lunas semua</p>
+                </div>
+              )}
+            </>
+          )}
+
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/tagihan-kas" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-violet-300 hover:bg-violet-50/50 transition-colors cursor-pointer group">
+              <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-200 transition-colors">
+                <Wallet className="w-4 h-4 text-violet-600" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Tagihan Kas</p>
+                <p className="text-[10px] text-muted-foreground">Iuran kas warga</p>
+              </div>
+            </Link>
+            <Link href="/pengeluaran-kas" className="flex items-center gap-2 p-3 rounded-xl border border-border/50 bg-card hover:border-violet-300 hover:bg-violet-50/50 transition-colors cursor-pointer group">
+              <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-200 transition-colors">
+                <Receipt className="w-4 h-4 text-violet-600" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Pengeluaran Kas</p>
+                <p className="text-[10px] text-muted-foreground">Laporan belanja</p>
+              </div>
+            </Link>
+          </div>
+        </section>
+
+      </div>
     </main>
   )
 }

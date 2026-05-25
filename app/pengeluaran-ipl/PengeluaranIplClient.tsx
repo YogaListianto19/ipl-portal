@@ -39,7 +39,7 @@ export function PengeluaranIplClient({ expenses }: Props) {
   }, [expenses, filter])
 
   return (
-    <main className="max-w-xl mx-auto px-4 py-5 pb-24 lg:pb-8 space-y-5">
+    <main className="max-w-xl mx-auto lg:max-w-3xl px-4 py-5 pb-24 lg:pb-8 space-y-5">
       {/* Header */}
       <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-rose-900 via-rose-700 to-pink-600 p-5 shadow-md shadow-primary/20">
         <div className="absolute -top-6 -right-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none" />
