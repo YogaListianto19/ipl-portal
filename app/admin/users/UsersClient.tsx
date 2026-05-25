@@ -4,7 +4,7 @@ import { useState, useMemo, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Users, Search, Shield, KeyRound, ToggleLeft, ToggleRight,
-  CheckCircle2, XCircle, ChevronDown, Loader2
+  CheckCircle2, XCircle, ChevronDown, Loader2, UserPlus, X
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -41,13 +41,19 @@ async function callApi(id: string, action: string, value?: string) {
   if (!res.ok) throw new Error((await res.json()).error ?? 'Gagal')
 }
 
+const EMPTY_FORM = { name: '', blok: '', mobile: '', role: 'resident' as Role, password: '', is_active: true }
+
 export function UsersClient({ residents: initial }: Props) {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<FilterType>('all')
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [residents, setResidents] = useState(initial)
+  const [showAdd, setShowAdd] = useState(false)
+  const [form, setForm] = useState(EMPTY_FORM)
+  const [formError, setFormError] = useState('')
+  const [adding, setAdding] = useState(false)
 
   const filtered = useMemo(() => {
     let list = residents
@@ -67,6 +73,28 @@ export function UsersClient({ residents: initial }: Props) {
 
   const adminCount = residents.filter(r => r.role !== 'resident').length
   const inactiveCount = residents.filter(r => !r.is_active).length
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault()
+    setFormError('')
+    setAdding(true)
+    try {
+      const res = await fetch('/api/admin/residents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Gagal menambah user')
+      setResidents(prev => [...prev, json.resident].sort((a, b) => a.blok.localeCompare(b.blok)))
+      setForm(EMPTY_FORM)
+      setShowAdd(false)
+    } catch (e) {
+      setFormError((e as Error).message)
+    } finally {
+      setAdding(false)
+    }
+  }
 
   async function handleAction(id: string, action: string, value?: string) {
     setLoadingId(id)
@@ -97,14 +125,146 @@ export function UsersClient({ residents: initial }: Props) {
           <div className="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
             <Users className="w-5 h-5 text-white" />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h1 className="text-xl font-bold text-white">Kelola User</h1>
             <p className="text-sm text-white/55 mt-0.5">
               {residents.length} warga · {adminCount} pengurus · {inactiveCount} nonaktif
             </p>
           </div>
+          <button
+            onClick={() => { setShowAdd(true); setFormError('') }}
+            className="flex items-center gap-1.5 px-3 py-2 bg-white/15 hover:bg-white/25 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer shrink-0"
+          >
+            <UserPlus className="w-4 h-4" />
+            Tambah
+          </button>
         </div>
       </div>
+
+      {/* Add User Modal */}
+      {showAdd && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-card rounded-2xl shadow-2xl border border-border/60 overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
+              <div className="flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-primary" />
+                <h2 className="text-base font-bold text-foreground">Tambah User Baru</h2>
+              </div>
+              <button
+                onClick={() => { setShowAdd(false); setFormError('') }}
+                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground cursor-pointer transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleAdd} className="p-5 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2 space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground">Nama Lengkap *</label>
+                  <Input
+                    value={form.name}
+                    onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                    placeholder="Contoh: Budi Santoso"
+                    className="h-9 rounded-xl text-sm"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground">Unit / Blok *</label>
+                  <Input
+                    value={form.blok}
+                    onChange={e => setForm(f => ({ ...f, blok: e.target.value }))}
+                    placeholder="Rossela 10"
+                    className="h-9 rounded-xl text-sm"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground">Nomor WA *</label>
+                  <Input
+                    value={form.mobile}
+                    onChange={e => setForm(f => ({ ...f, mobile: e.target.value }))}
+                    placeholder="08xxxxxxxxxx"
+                    type="tel"
+                    className="h-9 rounded-xl text-sm"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground">Role</label>
+                  <select
+                    value={form.role}
+                    onChange={e => setForm(f => ({ ...f, role: e.target.value as Role }))}
+                    className="w-full h-9 px-3 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    {ROLES.map(r => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground">
+                    Password <span className="font-normal text-muted-foreground">(default: rossela2026)</span>
+                  </label>
+                  <Input
+                    value={form.password}
+                    onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                    placeholder="Kosongkan = default"
+                    type="password"
+                    className="h-9 rounded-xl text-sm"
+                  />
+                </div>
+                <div className="col-span-2 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, is_active: !f.is_active }))}
+                    className={cn(
+                      'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors',
+                      form.is_active
+                        ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    )}
+                  >
+                    {form.is_active
+                      ? <><ToggleRight className="w-4 h-4" /> Aktif di portal</>
+                      : <><ToggleLeft className="w-4 h-4" /> Nonaktif</>
+                    }
+                  </button>
+                  <p className="text-[11px] text-muted-foreground">
+                    {form.is_active ? 'Warga bisa login langsung' : 'Warga belum bisa login'}
+                  </p>
+                </div>
+              </div>
+
+              {formError && (
+                <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-200">
+                  {formError}
+                </p>
+              )}
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => { setShowAdd(false); setFormError('') }}
+                  className="flex-1 h-10 rounded-xl border border-border/60 text-sm font-medium text-muted-foreground hover:bg-muted/50 cursor-pointer transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={adding}
+                  className="flex-1 h-10 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 cursor-pointer transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {adding ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Menyimpan...</> : 'Simpan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Search + Filter */}
       <div className="space-y-3">
