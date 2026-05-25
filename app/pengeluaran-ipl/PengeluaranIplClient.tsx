@@ -125,18 +125,15 @@ function ExpenseRow({ expense: exp }: { expense: Expense }) {
         <Icon className={cn('w-4 h-4', cfg.color)} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-foreground truncate">
+        <p className="text-sm font-semibold text-foreground leading-snug">
           {exp.description || exp.vendor_name || exp.bill_number}
         </p>
-        {exp.description && exp.vendor_name && (
-          <p className="text-xs text-muted-foreground truncate">{exp.vendor_name}</p>
-        )}
-        <div className="flex items-center gap-2 mt-0.5">
+        <div className="flex items-center gap-2 mt-1">
           <span className="text-xs text-muted-foreground">{exp.bill_number}</span>
           {exp.bill_date && <span className="text-xs text-muted-foreground">· {formatDateShort(exp.bill_date)}</span>}
         </div>
       </div>
-      <div className="text-right shrink-0">
+      <div className="text-right shrink-0 ml-2">
         <p className="text-sm font-bold text-foreground">{formatRupiah(exp.amount_total)}</p>
         {exp.amount_due > 0 && exp.payment_status !== 'paid' && (
           <p className="text-xs text-muted-foreground">sisa {formatRupiah(exp.amount_due)}</p>
