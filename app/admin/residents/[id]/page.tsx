@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { ArrowLeft, Phone, Home, ShieldCheck, FileText, Receipt, CheckCircle2, XCircle } from 'lucide-react'
 import { verifyToken, isAdmin, roleLabel } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { formatRupiah, monthIndo, monthOrder } from '@/lib/format'
 import type { Invoice, KasInvoice } from '@/lib/types'
@@ -75,35 +74,37 @@ export default async function ResidentDetailPage({ params }: { params: Promise<{
       {/* ── Resident Header Card ─────────────────────────────── */}
       <div className="rounded-2xl border border-border/50 bg-card shadow-sm overflow-hidden">
 
-        {/* Top band */}
-        <div className="bg-linear-to-r from-rose-600 to-pink-500 px-5 pt-5 pb-8" />
-
-        {/* Avatar + info */}
-        <div className="px-5 pb-4 -mt-6">
-          <div className="flex items-end gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center shrink-0 border-2 border-white">
-              <span className="text-lg font-bold text-rose-600">{initials}</span>
+        {/* Gradient band — semua info di sini, teks putih */}
+        <div className="bg-linear-to-br from-rose-700 via-rose-600 to-pink-500 px-5 py-5">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/30 shadow-inner">
+              <span className="text-xl font-bold text-white">{initials}</span>
             </div>
-            <div className="pb-1 flex-1 min-w-0">
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-lg font-bold text-foreground leading-tight">{resident.name}</h1>
+                <h1 className="text-lg font-bold text-white leading-tight">{resident.name}</h1>
                 {resident.role !== 'resident' && (
-                  <Badge className="text-[10px] h-4 shrink-0">
-                    <ShieldCheck className="w-3 h-3 mr-0.5" />{roleLabel(resident.role)}
-                  </Badge>
+                  <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-white/20 text-white text-[10px] font-semibold shrink-0">
+                    <ShieldCheck className="w-3 h-3" />{roleLabel(resident.role)}
+                  </span>
                 )}
                 {!resident.is_active && (
-                  <Badge variant="destructive" className="text-[10px] h-4 shrink-0">Nonaktif</Badge>
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-black/20 text-white/80 text-[10px] font-semibold shrink-0">
+                    Nonaktif
+                  </span>
                 )}
               </div>
-              <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-3 mt-1 text-white/70 text-xs">
                 <span className="flex items-center gap-1"><Home className="w-3 h-3" />{resident.blok}</span>
                 <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{resident.mobile}</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <Separator className="my-4" />
+        {/* White area — summary boxes */}
+        <div className="px-5 pb-4 pt-4">
+          <Separator className="mb-4" />
 
           {/* IPL + Kas summary — 2 col */}
           <div className="grid grid-cols-2 gap-3">
