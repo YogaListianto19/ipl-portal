@@ -2,7 +2,6 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyToken, isAdmin } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
-import { Navbar } from '@/components/Navbar'
 import { AdminDashboardClient } from './AdminDashboardClient'
 
 export default async function AdminDashboardPage() {
@@ -42,14 +41,11 @@ export default async function AdminDashboardPage() {
   const withDebt = residentsWithSummary.filter(r => r.summary.unpaid > 0).length
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar name={payload.name} blok={payload.blok} role={payload.role} />
-      <AdminDashboardClient
-        residents={residentsWithSummary}
-        totalDue={totalBlokDue}
-        withDebt={withDebt}
-        lastSync={lastSync?.[0] ?? null}
-      />
-    </div>
+    <AdminDashboardClient
+      residents={residentsWithSummary}
+      totalDue={totalBlokDue}
+      withDebt={withDebt}
+      lastSync={lastSync?.[0] ?? null}
+    />
   )
 }

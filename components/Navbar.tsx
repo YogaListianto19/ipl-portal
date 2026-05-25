@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LogOut, Users, RefreshCw, User, ChevronDown, LayoutDashboard } from 'lucide-react'
+import { LogOut, Users, RefreshCw, User, ChevronDown, LayoutDashboard, ShieldCheck } from 'lucide-react'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -106,6 +106,10 @@ export function Navbar({ name, blok, role }: NavbarProps) {
                 <DropdownMenuItem onClick={() => router.push('/admin/dashboard')} className="flex items-center gap-2 cursor-pointer">
                   <Users className="w-4 h-4" />
                   Semua Warga
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/admin/users')} className="flex items-center gap-2 cursor-pointer">
+                  <ShieldCheck className="w-4 h-4" />
+                  Kelola User
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push('/admin/sync')} className="flex items-center gap-2 cursor-pointer">
                   <RefreshCw className="w-4 h-4" />

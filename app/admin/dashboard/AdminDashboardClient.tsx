@@ -51,7 +51,7 @@ export function AdminDashboardClient({ residents, totalDue, withDebt, lastSync }
   }, [residents, filter, search])
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-5 pb-8 space-y-5">
+    <main className="max-w-xl mx-auto lg:max-w-3xl px-4 py-5 pb-24 lg:pb-8 space-y-5">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

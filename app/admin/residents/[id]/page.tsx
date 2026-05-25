@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { ArrowLeft, Phone, Home, ShieldCheck } from 'lucide-react'
 import { verifyToken, isAdmin, roleLabel } from '@/lib/auth'
 import { createServerClient } from '@/lib/supabase/server'
-import { Navbar } from '@/components/Navbar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -51,9 +50,7 @@ export default async function ResidentDetailPage({ params }: { params: Promise<{
     }))
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar name={payload.name} blok={payload.blok} role={payload.role} />
-      <main className="max-w-xl mx-auto px-4 py-6 space-y-5">
+    <main className="max-w-xl mx-auto px-4 py-6 space-y-5">
         {/* Back */}
         <Link
           href="/admin/dashboard"
@@ -174,7 +171,6 @@ export default async function ResidentDetailPage({ params }: { params: Promise<{
             </div>
           )}
         </div>
-      </main>
-    </div>
+    </main>
   )
 }
